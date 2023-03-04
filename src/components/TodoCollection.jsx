@@ -8,7 +8,7 @@ const TodoCollection = ({
   onDelete,
 }) => {
   const todoItemsJSX = todoItems.map((item) => (
-    <TodoItem todoItem={item} key={item.id} />
+    <TodoItem todoItem={item} key={item.id} onToggle={onToggle} />
   ));
 
   return (
