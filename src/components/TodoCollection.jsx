@@ -1,14 +1,20 @@
 import TodoItem from './TodoItem';
 
-const TodoCollection = () => {
+const TodoCollection = ({
+  todoItems,
+  onToggle,
+  onChangeMode,
+  onSave,
+  onDelete,
+}) => {
+  const todoItemsJSX = todoItems.map((item) => (
+    <TodoItem todoItem={item} key={item.id} />
+  ));
+
   return (
     <div>
       TodoCollection
-      <TodoItem />
-      <TodoItem />
-      <TodoItem />
-      <TodoItem />
-      <TodoItem />
+      {todoItemsJSX}
     </div>
   );
 };
