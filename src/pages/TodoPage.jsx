@@ -54,6 +54,35 @@ const TodoPage = () => {
     });
   };
 
+  const handleChangeMode = ({ id, isEdit }) => {
+    setTodos((prevTodos) => {
+      return prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            isEdit,
+          };
+        }
+        return { ...todo, isEdit: false };
+      });
+    });
+  };
+
+  const handleSave = ({ id, title }) => {
+    setTodos((prevTodos) => {
+      return prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            title,
+            isEdit: false,
+          };
+        }
+        return todo;
+      });
+    });
+  };
+
   return (
     <div>
       TodoPage
@@ -63,7 +92,12 @@ const TodoPage = () => {
         onChange={handleChange}
         onSubmit={handleSubmit}
       />
-      <TodoCollection todoItems={todos} onToggle={handleToggle} />
+      <TodoCollection
+        todoItems={todos}
+        onToggle={handleToggle}
+        onChangeMode={handleChangeMode}
+        onSave={handleSave}
+      />
       <Footer />
     </div>
   );

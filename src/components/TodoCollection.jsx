@@ -8,7 +8,13 @@ const TodoCollection = ({
   onDelete,
 }) => {
   const todoItemsJSX = todoItems.map((item) => (
-    <TodoItem todoItem={item} key={item.id} onToggle={onToggle} />
+    <TodoItem
+      todoItem={item}
+      key={item.id}
+      onToggle={onToggle}
+      onChangeMode={({ id, isEdit }) => onChangeMode({ id, isEdit })}
+      onSave={({ id, title }) => onSave?.({ id, title })}
+    />
   ));
 
   return (

@@ -5,6 +5,7 @@ import {
   CheckCircleIcon,
   CheckHoverIcon,
 } from 'assets/images';
+import { useRef } from 'react';
 
 const StyledTaskItem = styled.div`
   min-height: 52px;
@@ -102,17 +103,39 @@ const StyledTaskItem = styled.div`
 `;
 
 const TodoItem = ({ todoItem, onToggle, onChangeMode, onSave, onDelete }) => {
+  const inputRef = useRef(null);
+
+  const handleKeyDown = (e) => {
+    if (inputRef.current.value.trim().length > 0 && e.key === 'Enter') {
+      onSave({ id: todoItem.id, title: inputRef.current.value });
+    }
+
+    if (e.key === 'Escape') {
+      onChangeMode({ id: todoItem.id, isEdit: false });
+    }
+  };
+
   return (
-    <StyledTaskItem className={clsx('', { done: todoItem.isDone })}>
+    <StyledTaskItem
+      className={clsx('', { done: todoItem.isDone, edit: todoItem.isEdit })}
+    >
       <div className="task-item-checked">
         <span
           className="icon icon-checked"
           onClick={() => onToggle(todoItem.id)}
         />
       </div>
-      <div className="task-item-body">
+      <div
+        className="task-item-body"
+        onDoubleClick={() => onChangeMode({ id: todoItem.id, isEdit: true })}
+      >
         <span className="task-item-body-text">{todoItem.title}</span>
-        <input className="task-item-body-input" />
+        <input
+          className="task-item-body-input"
+          ref={inputRef}
+          onKeyDown={handleKeyDown}
+          defaultValue={todoItem.title}
+        />
       </div>
       <div className="task-item-action ">
         <button className="btn-reset btn-destroy icon"></button>
