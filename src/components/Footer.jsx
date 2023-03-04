@@ -31,10 +31,12 @@ const StyledButton = styled.button`
   }
 `;
 
-const Footer = () => {
+const Footer = ({ todoItems }) => {
+  const itemLeft = todoItems.filter((todo) => todo.isDone === false).length;
+
   return (
     <StyledFooter>
-      <p>剩餘項目數： 0</p>
+      <p>剩餘項目數： {itemLeft}</p>
       <StyledButton>登出</StyledButton>
     </StyledFooter>
   );
