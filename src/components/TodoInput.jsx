@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import styled from 'styled-components';
 
 const StyledAddTodoContainer = styled.div`
@@ -67,15 +68,41 @@ const StyledAddTodoActionContainer = styled.div`
     }
   }
 `;
-const TodoInput = ({ inputValue, onChange, onKeyDown, onAddTodo }) => {
+
+// 雖然沒有用 form 包覆，但不論是 keydown or addtodo 可以整合成 submit 的概念，就不用寫重複的 handle
+const TodoInput = ({
+  inputValue,
+  onChange,
+  onSubmit,
+  onKeyDown,
+  onAddTodo,
+}) => {
   return (
-    <StyledAddTodoContainer>
+    <StyledAddTodoContainer
+      className={clsx('', { active: inputValue.length > 0 })}
+    >
       <StyledLabelIcon className="icon" htmlFor="add-todo-input" />
+
       <StyledInputContainer>
-        <input id="add-todo-input" type="text" placeholder="新增工作" />
+        <input
+          id="add-todo-input"
+          type="text"
+          placeholder="新增工作"
+          value={inputValue}
+          onChange={onChange}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onSubmit?.();
+            }
+          }}
+        />
       </StyledInputContainer>
-      <StyledAddTodoActionContainer>
-        <button className="btn-reset">新增</button>
+      <StyledAddTodoActionContainer
+        className={clsx('', { active: inputValue.length > 0 })}
+      >
+        <button className="btn-reset" onClick={() => onSubmit?.()}>
+          新增
+        </button>
       </StyledAddTodoActionContainer>
     </StyledAddTodoContainer>
   );
