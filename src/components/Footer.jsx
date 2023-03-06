@@ -36,7 +36,8 @@ const Footer = ({ todoItems }) => {
 
   return (
     <StyledFooter>
-      <p>剩餘項目數： {itemLeft}</p>
+      <p>總項目： {todoItems.length}</p>
+      <p>待完成： {itemLeft}</p>
       <StyledButton>登出</StyledButton>
     </StyledFooter>
   );
