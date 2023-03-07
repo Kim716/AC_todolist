@@ -1,44 +1,38 @@
+import { getTodos, createTodos } from '../api/todos';
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
-import { useState } from 'react';
-
-const dummyTodos = [
-  {
-    title: 'Learn react-router',
-    isDone: true,
-    id: 1,
-  },
-  {
-    title: 'Learn to create custom hooks',
-    isDone: false,
-    id: 2,
-  },
-  {
-    title: 'Learn to use context',
-    isDone: true,
-    id: 3,
-  },
-  {
-    title: 'Learn to implement auth',
-    isDone: false,
-    id: 4,
-  },
-];
+import { useEffect, useState } from 'react';
 
 const TodoPage = () => {
   const [inputValue, setInputValue] = useState('');
-  const [todos, setTodos] = useState(dummyTodos);
+  const [todos, setTodos] = useState([]);
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    const getTodosAsync = async () => {
+      try {
+        const todos = await getTodos();
+        setTodos(todos.map((todo) => ({ ...todo, isEdit: false })));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getTodosAsync();
+  }, []);
+
+  const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     if (inputValue.trim().length === 0) return;
 
-    setTodos([
-      ...todos,
-      { title: inputValue, isDone: false, id: new Date().toISOString() },
-    ]);
+    const data = await createTodos({ title: inputValue, isDone: false });
+
+    setTodos((t) => {
+      return [
+        ...t,
+        { id: data.id, title: data.title, isDone: data.isDone, isEdit: false },
+      ];
+    });
 
     setInputValue('');
   };
@@ -93,7 +87,7 @@ const TodoPage = () => {
       <Header />
       <TodoInput
         inputValue={inputValue}
-        onChange={handleChange}
+        onChange={handleInputChange}
         onSubmit={handleSubmit}
       />
       <TodoCollection
