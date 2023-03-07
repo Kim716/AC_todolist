@@ -1,4 +1,4 @@
-import { getTodos, createTodos } from '../api/todos';
+import { getTodos, createTodos, patchTodos, deleteTodos } from '../api/todos';
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
 import { useEffect, useState } from 'react';
 
@@ -25,27 +25,36 @@ const TodoPage = () => {
   const handleSubmit = async (e) => {
     if (inputValue.trim().length === 0) return;
 
-    const data = await createTodos({ title: inputValue, isDone: false });
+    const todo = await createTodos({ title: inputValue, isDone: false });
 
     setTodos((t) => {
       return [
         ...t,
-        { id: data.id, title: data.title, isDone: data.isDone, isEdit: false },
+        { id: todo.id, title: todo.title, isDone: todo.isDone, isEdit: false },
       ];
     });
 
     setInputValue('');
   };
 
-  const handleToggle = (id) => {
-    setTodos((prevTodos) => {
-      return prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, isDone: !todo.isDone };
-        }
-        return todo;
+  const handleToggle = async (id) => {
+    // 為了取得當前的 isDone
+    const currentTodo = todos.find((todo) => todo.id === id);
+
+    try {
+      await patchTodos({ id, isDone: !currentTodo.isDone });
+
+      setTodos((prevTodos) => {
+        return prevTodos.map((todo) => {
+          if (todo.id === id) {
+            return { ...todo, isDone: !todo.isDone };
+          }
+          return todo;
+        });
       });
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleChangeMode = ({ id, isEdit }) => {
@@ -62,23 +71,34 @@ const TodoPage = () => {
     });
   };
 
-  const handleSave = ({ id, title }) => {
-    setTodos((prevTodos) => {
-      return prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return {
-            ...todo,
-            title,
-            isEdit: false,
-          };
-        }
-        return todo;
+  const handleSave = async ({ id, title }) => {
+    try {
+      await patchTodos({ id, title });
+
+      setTodos((prevTodos) => {
+        return prevTodos.map((todo) => {
+          if (todo.id === id) {
+            return {
+              ...todo,
+              title,
+              isEdit: false,
+            };
+          }
+          return todo;
+        });
       });
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleDelete = (id) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteTodos({ id });
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
