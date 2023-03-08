@@ -7,15 +7,17 @@ import {
 import { ACLogoIcon } from 'assets/images';
 import { AuthInput } from 'components';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { login } from 'api/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../api/auth';
 import Swal from 'sweetalert2';
 
 const LoginPage = () => {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleClick = async (username, password) => {
+  const navigate = useNavigate();
+
+  const handleClick = async () => {
     // 沒有輸入帳密就直接擋掉
     if (username.length === 0 || password.length === 0) {
       return;
@@ -36,6 +38,8 @@ const LoginPage = () => {
         showConfirmButton: false,
       });
 
+      // 網頁跳轉
+      navigate('/todos');
       return;
     }
 
@@ -59,9 +63,9 @@ const LoginPage = () => {
       <AuthInputContainer>
         <AuthInput
           label={'帳號'}
-          value={userName}
+          value={username}
           placeholder={'請輸入帳號'}
-          onChange={(nameInputValue) => setUserName(nameInputValue)}
+          onChange={(nameInputValue) => setUsername(nameInputValue)}
         />
       </AuthInputContainer>
 
@@ -74,9 +78,7 @@ const LoginPage = () => {
           onChange={(passwordInputValue) => setPassword(passwordInputValue)}
         />
       </AuthInputContainer>
-      <AuthButton onClick={() => handleClick(userName, password)}>
-        登入
-      </AuthButton>
+      <AuthButton onClick={handleClick}>登入</AuthButton>
       <AuthLinkText>
         <Link to="/signup">
           <AuthLinkText>註冊</AuthLinkText>

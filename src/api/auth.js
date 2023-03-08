@@ -17,3 +17,23 @@ export const login = async ({ username, password }) => {
     console.error('[ ⚠️⚠️⚠️ Login Failed ]:', error);
   }
 };
+
+export const register = async ({ username, email, password }) => {
+  try {
+    const res = await axios.post(`${baseUrl}/register`, {
+      username,
+      email,
+      password,
+    });
+
+    // 確認是否註冊成功(註冊成功只有authToken)
+    if (res.data.authToken) {
+      return { success: true, ...res.data };
+    }
+
+    // 註冊失敗也還是會有回傳值{"success": false,"message": "Username or email has been taken"}
+    return res.data;
+  } catch (error) {
+    console.error('[ ⚠️⚠️⚠️ Register Failed ]:', error);
+  }
+};
