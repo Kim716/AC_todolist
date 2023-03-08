@@ -14,7 +14,6 @@ const StyledLabel = styled.label`
   color: '#696974';
   text-align: start;
 `;
-
 const StyledInput = styled.input`
   outline: none;
   border: none;
@@ -22,11 +21,16 @@ const StyledInput = styled.input`
   border-radius: 0px;
 `;
 
-const AuthInput = () => {
+const AuthInput = ({ type, label, value, placeholder, onChange }) => {
   return (
     <StyledContainer>
-      <StyledLabel>label</StyledLabel>
-      <StyledInput type="text" placeholder="placeholder" />
+      <StyledLabel>{label}</StyledLabel>
+      <StyledInput
+        type={type || 'text'}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
     </StyledContainer>
   );
 };
