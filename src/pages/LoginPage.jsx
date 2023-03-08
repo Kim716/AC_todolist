@@ -6,9 +6,9 @@ import {
 } from 'components/common/auth.styled';
 import { ACLogoIcon } from 'assets/images';
 import { AuthInput } from 'components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../api/auth';
+import { checkPermission, login } from '../api/auth';
 import Swal from 'sweetalert2';
 
 const LoginPage = () => {
@@ -52,6 +52,26 @@ const LoginPage = () => {
       showConfirmButton: false,
     });
   };
+
+  // dependency 的部分，教案擺入 navigate，eslint 也表示要擺入東西，但如果本就沒有打算根據什麼狀況的更新來啟動 useEffect 應該可以不用擺？
+  useEffect(() => {
+    const checkTokenIsValid = async () => {
+      const authToken = localStorage.getItem('authToken');
+      // 如果 authToken 不存在，就什麼都別做，留在這頁
+      if (!authToken) {
+        return;
+      }
+
+      // 確認 authToken 是不是有效的，這個會回傳 success 的布林值
+      const result = await checkPermission(authToken);
+      // 如果 authToken 有效，代表是登入狀態，就直接去 todos 頁面
+      if (result) {
+        navigate('/todos');
+      }
+    };
+
+    checkTokenIsValid();
+  }, []);
 
   return (
     <AuthContainer>
