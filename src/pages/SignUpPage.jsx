@@ -8,8 +8,8 @@ import { ACLogoIcon } from 'assets/images';
 import { AuthInput } from 'components';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { checkPermission, register } from '../api/auth';
 import Swal from 'sweetalert2';
+import { useAuthContext } from 'contexts/AuthContext';
 
 const SignUpPage = () => {
   const [username, setUsername] = useState('');
@@ -17,6 +17,7 @@ const SignUpPage = () => {
   const [password, setPassword] = useState('');
 
   const navigate = useNavigate();
+  const { register, isAuthenticated } = useAuthContext();
 
   const handleRegisterClick = async () => {
     // 沒有輸入就直接擋掉
@@ -24,15 +25,13 @@ const SignUpPage = () => {
       return;
     }
 
-    const { success, authToken } = await register({
+    const success = await register({
       username,
       email,
       password,
     });
 
     if (success) {
-      localStorage.setItem('authToken', authToken);
-
       // 跳出登入成功訊息
       Swal.fire({
         position: 'top',
@@ -41,9 +40,6 @@ const SignUpPage = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-
-      // 網頁跳轉
-      navigate('/todos');
       return;
     }
 
@@ -57,24 +53,12 @@ const SignUpPage = () => {
   };
 
   // dependency 的部分，教案擺入 navigate，eslint 也表示要擺入東西，但如果本就沒有打算根據什麼狀況的更新來啟動 useEffect 應該可以不用擺？
+  // 重構後還是不理解為什麼一定要擺入 navigate
   useEffect(() => {
-    const checkTokenIsValid = async () => {
-      const authToken = localStorage.getItem('authToken');
-      // 如果 authToken 不存在，就什麼都別做，留在這頁
-      if (!authToken) {
-        return;
-      }
-
-      // 確認 authToken 是不是有效的，這個會回傳 success 的布林值
-      const result = await checkPermission(authToken);
-      // 如果 authToken 有效，代表是登入狀態，就直接去 todos 頁面
-      if (result) {
-        navigate('/todos');
-      }
-    };
-
-    checkTokenIsValid();
-  }, []);
+    if (isAuthenticated) {
+      navigate('/todos');
+    }
+  }, [isAuthenticated]);
 
   return (
     <AuthContainer>

@@ -100,7 +100,7 @@ export const AuthContextProvider = ({ children }) => {
             setIsAuthenticated(false);
           }
 
-          // 最後才把有沒有成功回傳去？
+          // 最後才把有沒有成功回傳出去？
           return success;
         },
         logout: () => {

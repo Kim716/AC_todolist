@@ -1,14 +1,15 @@
 import { getTodos, createTodos, patchTodos, deleteTodos } from '../api/todos';
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
 import { useEffect, useState } from 'react';
-import { checkPermission } from 'api/auth';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from 'contexts/AuthContext';
 
 const TodoPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [todos, setTodos] = useState([]);
 
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthContext();
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -93,6 +94,7 @@ const TodoPage = () => {
     }
   };
 
+  // 取得 todos 資料
   useEffect(() => {
     const getTodosAsync = async () => {
       try {
@@ -106,24 +108,10 @@ const TodoPage = () => {
   }, []);
 
   useEffect(() => {
-    const checkTokenIsValid = async () => {
-      const authToken = localStorage.getItem('authToken');
-      // 如果 authToken 不存在，就要回到登入頁！
-      if (!authToken) {
-        navigate('/login');
-        return;
-      }
-
-      // 確認 authToken 是不是有效的，這個會回傳 success 的布林值
-      const result = await checkPermission(authToken);
-      // 如果 authToken 無效，就要回到登入頁
-      if (!result) {
-        navigate('/login');
-      }
-    };
-
-    checkTokenIsValid();
-  }, []);
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated]);
 
   return (
     <div>
