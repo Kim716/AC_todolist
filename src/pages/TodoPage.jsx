@@ -9,7 +9,7 @@ const TodoPage = () => {
   const [todos, setTodos] = useState([]);
 
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, currentMember } = useAuthContext();
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -26,7 +26,6 @@ const TodoPage = () => {
         { id: todo.id, title: todo.title, isDone: todo.isDone, isEdit: false },
       ];
     });
-
     setInputValue('');
   };
 
@@ -116,7 +115,8 @@ const TodoPage = () => {
   return (
     <div>
       TodoPage
-      <Header />
+      <Header currentMember={currentMember?.name} />{' '}
+      {/* 一定要有 ?. 因為有些時候  currentMember 為 null*/}
       <TodoInput
         inputValue={inputValue}
         onChange={handleInputChange}
