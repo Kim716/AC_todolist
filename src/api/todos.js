@@ -1,11 +1,29 @@
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:3001';
+const baseUrl = 'https://todo-list.alphacamp.io/api';
+
+const axiosInstance = axios.create({
+  baseURL: baseUrl,
+});
+
+// 發送請求前都要做一個在 header 放 authToken 的動作
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    console.error(error);
+  },
+);
 
 export const getTodos = async () => {
   try {
-    const res = await axios.get(`${baseUrl}/todos`);
-    return res.data;
+    const res = await axiosInstance.get(`${baseUrl}/todos`);
+    return res.data.data;
   } catch (error) {
     console.error('[⚠️ Get Todos failed]: ', error);
   }
@@ -17,7 +35,7 @@ export const createTodos = async ({ title, isDone }) => {
   try {
     // post 會自動新增 id
     // 第二個參數是要 create 的資料
-    const res = await axios.post(`${baseUrl}/todos`, { title, isDone });
+    const res = await axiosInstance.post(`${baseUrl}/todos`, { title, isDone });
     return res.data;
   } catch (error) {
     console.error('[⚠️ Create Todo failed]: ', error);
@@ -26,7 +44,7 @@ export const createTodos = async ({ title, isDone }) => {
 
 export const patchTodos = async ({ id, title, isDone }) => {
   try {
-    const res = await axios.patch(`${baseUrl}/todos/${id}`, {
+    const res = await axiosInstance.patch(`${baseUrl}/todos/${id}`, {
       title,
       isDone,
     });
@@ -38,7 +56,7 @@ export const patchTodos = async ({ id, title, isDone }) => {
 
 export const deleteTodos = async ({ id }) => {
   try {
-    const res = await axios.delete(`${baseUrl}/todos/${id}`);
+    const res = await axiosInstance.delete(`${baseUrl}/todos/${id}`);
     return res.data;
   } catch (error) {
     console.error('[⚠️ Delete Todo failed]: ', error);
