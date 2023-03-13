@@ -54,7 +54,7 @@ const LoginPage = () => {
     if (isAuthenticated) {
       navigate('/todos');
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <AuthContainer>

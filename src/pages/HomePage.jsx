@@ -12,7 +12,7 @@ const HomePage = () => {
     } else {
       navigate('/login');
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return <div>HomePage</div>;
 };
