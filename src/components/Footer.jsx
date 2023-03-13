@@ -40,7 +40,7 @@ const Footer = ({ todoItems }) => {
   return (
     <StyledFooter>
       <p>總項目： {todoItems.length}</p>
-      <p>待完成項目： {itemLeft}</p>
+      <p>待完成： {itemLeft}</p>
       <StyledButton onClick={logout}>登出</StyledButton>
     </StyledFooter>
   );
