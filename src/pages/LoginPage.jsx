@@ -61,7 +61,7 @@ const LoginPage = () => {
       <div>
         <ACLogoIcon />
       </div>
-      <h1>登入 Todo</h1>
+      <h1>登入 TodoList</h1>
 
       <AuthInputContainer>
         <AuthInput
